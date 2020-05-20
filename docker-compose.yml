@@ -1,0 +1,34 @@
+version: '3.3'
+services:
+
+  wordpress:
+    image: wordpress:5.4
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: demo
+      WORDPRESS_DB_PASSWORD: badidea
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress:/var/www/html
+      - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+
+  db:
+    image: mariadb:10.5
+    restart: always
+    expose:
+      - '3306'
+    environment:
+      MYSQL_USER: demo
+      MYSQL_PASSWORD: badidea
+      MYSQL_DATABASE: wordpress
+      MYSQL_ROOT_PASSWORD: reallybadidea
+    volumes:
+      - db:/var/lib/mysql
+
+volumes:
+  wordpress: {}
+  db: {}
+
