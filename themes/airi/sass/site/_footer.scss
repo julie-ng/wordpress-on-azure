@@ -1,0 +1,37 @@
+
+.footer-widgets {
+	padding-top: 80px;
+	padding-bottom: 80px;	
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center;
+	border-top: 1px solid #ebebeb;
+}
+
+.sidebar-column {
+
+	.widget {
+
+		&:last-of-type {
+			margin-bottom: 0;
+		}
+	}
+
+	.widget-title {
+		font-size: 20px;
+		margin: 0 0 40px;
+	}
+}
+
+.site-info {
+	padding-top: 15px;
+	padding-bottom: 15px;
+	color: #595959;
+	font-size: 13px;
+	text-transform: uppercase;
+	border-top: 1px solid #ebebeb;
+
+	a {
+		color: #595959;
+	}
+}

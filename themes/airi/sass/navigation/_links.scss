@@ -1,0 +1,17 @@
+a {
+	transition: all 0.3s;
+	color: $color__link;
+
+	&:hover,
+	&:focus,
+	&:active {
+		text-decoration: none;
+	}
+	&:focus {
+		outline: thin dotted;
+	}
+	&:hover,
+	&:active {
+		outline: 0;
+	}
+}

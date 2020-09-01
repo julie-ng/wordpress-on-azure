@@ -1,0 +1,19 @@
+
+body {
+	font-family: 'Work Sans', sans-serif;
+	font-size: 16px;
+}
+
+body,
+button,
+input,
+select,
+optgroup,
+textarea {
+	color: #595959;
+	line-height: $font__line-height-body;
+}
+
+@import "headings";
+
+@import "copy";

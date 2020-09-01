@@ -1,0 +1,24 @@
+#customize-controls .control-section-example-1 .accordion-section-title:hover,
+#customize-controls .control-section-example-1 .accordion-section-title:focus {
+	background-color: #fff;
+}
+
+.control-section-example-1 .accordion-section-title .button {
+	margin-top:  -4px;
+	font-weight: 400;
+	margin-left: 8px;
+}
+
+	.rtl .control-section-example-1 .accordion-section-title .button {
+		margin-left:  0;
+		margin-right: 8px;
+	}
+.wp-core-ui .button.upsell-button {
+	background-color: #d65050;
+	color: #fff;
+	box-shadow: none;
+}
+#customize-theme-controls #accordion-section-sydney_upsell h3 {
+	background-color: #f7f7f7;
+	padding: 25px 14px;
+}

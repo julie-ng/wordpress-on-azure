@@ -1,0 +1,36 @@
+button,
+.button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"],
+.learnpress-page .lp-button {
+
+	color: #fff;
+	font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid $color_primary;
+    background-color: $color_primary;
+    padding: 14px 30px;
+    border-radius: 2px;
+    transition: all 0.3s;
+	cursor: pointer;
+	border-radius: 30px;
+
+    .menuStyle3 .top-bar & {
+    	color: #fff;
+    }
+
+	&:hover {
+		background-color: transparent;
+		color: #000;
+	}
+
+	.menuStyle3 .top-bar & {
+		&:hover {
+			background-color: transparent;
+			color: #000;
+		}		
+	}
+}

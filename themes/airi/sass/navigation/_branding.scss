@@ -1,0 +1,17 @@
+.site-title {
+	font-size: 36px;
+	margin: 0;
+	font-weight: 600;
+
+	a {
+		color: #191919;
+	}
+}
+.site-description {
+	margin: 0;
+	color: #707070;
+
+	&:empty {
+		margin: 0;
+	}
+}

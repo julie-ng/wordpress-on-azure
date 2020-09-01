@@ -1,0 +1,25 @@
+<wpml-config>
+  <admin-texts>
+    <key name="theme_mods_airi">
+      <key name="read_more_text"/>
+      <key name="x1_cta_text"/>
+      <key name="x1_email_address"/>
+      <key name="x1_phone_number"/>
+      <key name="cta_text_menustyle4"/>
+      <key name="above_phone_number"/>
+      <key name="phone_number"/>
+      <key name="above_address"/>
+      <key name="address_details"/>
+      <key name="above_opening"/>
+      <key name="opening_hours"/>      
+      <key name="menu5_custom_text"/>     
+      <key name="menu5_facebook"/>   
+      <key name="menu5_twitter"/>
+      <key name="menu5_google"/>  
+      <key name="menu5_linkedin"/>  
+      <key name="menu5_skype"/> 
+      <key name="menu6_button_text"/> 
+      <key name="menu6_button_url"/> 
+    </key>
+  </admin-texts>
+</wpml-config>
