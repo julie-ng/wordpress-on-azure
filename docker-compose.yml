@@ -1,22 +1,25 @@
 version: '3.3'
 services:
-
   wordpress:
-    image: wordpress:5.4
+    # image: wordpress:5.4
+    build: .
     restart: always
     ports:
       - '8080:80'
+    depends_on:
+      - mysql
     environment:
-      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_HOST: mysql
       WORDPRESS_DB_USER: demo
       WORDPRESS_DB_PASSWORD: badidea
       WORDPRESS_DB_NAME: wordpress
     volumes:
-      - wordpress:/var/www/html
+      # - wordpress:/var/www/html
+      - ./themes/airi:/var/www/html/wp-content/themes/airi
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
-  db:
-    image: mariadb:10.5
+  mysql:
+    image: mysql:5.5
     restart: always
     expose:
       - '3306'
@@ -26,9 +29,9 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_ROOT_PASSWORD: reallybadidea
     volumes:
-      - db:/var/lib/mysql
+      - db_data:/var/lib/mysql
 
 volumes:
-  wordpress: {}
-  db: {}
+  # wordpress: {}
+  db_data: {}
 

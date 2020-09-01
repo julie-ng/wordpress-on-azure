@@ -1,2 +1,8 @@
 .DS_Store
 *.log
+
+# Azure infrastructure config
+azure.conf
+azure.azcli
+*.terraform
+*.tfplan

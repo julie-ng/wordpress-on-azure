@@ -1,0 +1,4 @@
+storage_account_name=""
+container_name=""
+key=""
+sas_token="?sv=2019-12-12…"
