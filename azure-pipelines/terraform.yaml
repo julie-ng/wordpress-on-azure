@@ -1,0 +1,70 @@
+# Build numbering format
+name: $(BuildID)
+
+trigger:
+  - feat/*
+  - main
+  - production
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # --- Configure ARM Client ---
+  # Inside the Azure DevOps "Library", we've created a variable group
+  # named `terraform-arm-client-config` which stores the service
+  # principal credentials in the following variables:
+  # - ARM_SUBSCRIPTION_ID
+  # - ARM_CLIENT_ID
+  # - ARM_CLIENT_SECRET
+  # - ARM_TENANT_ID
+  #
+  # These variables are automatically loaded into the environment
+  # of the DevOps agent, so they are not explicitly referenced in YAML.
+  # See https://www.terraform.io/docs/providers/azurerm/guides/service_principal_client_secret.html#configuring-the-service-principal-in-terraform
+  - group: terraform-arm-client-config
+
+  - name: is-dev
+    value: ${{ or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/feat/azure-pipelines')) }}
+
+  - name: is-production
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/production') }}
+
+  - name: is-deployment
+    value: ${{ and(or(variables['is-dev'], variables['is-production']), ne(variables['Build.Reason'], 'Schedule')) }}
+
+stages:
+- stage: ci
+  displayName: 'Terraform'
+  jobs:
+  - job: terraform
+    displayName: Terraform
+    steps:
+    - task: DownloadSecureFile@1
+      displayName: load backend config secretFile
+      name: terraformConfig
+      inputs:
+        secureFile: azure.conf
+
+    - script: terraform version
+      displayName: terraform version
+
+    - script: terraform init -backend-config=$(terraformConfig.secureFilePath)
+      displayName: terraform init
+
+    - script: terraform validate
+      displayName: terraform validate
+
+    - script: terraform fmt -check
+      displayName: terraform fmt (lint)
+
+    - script: terraform plan
+      displayName: terraform plan
+
+    - script: terraform plan -detailed-exitcode
+      displayName: detect configuration drift (prod only)
+      condition: ${{ variables['is-prod'] }}
+
+    - script: terraform apply -auto-approve
+      displayName: apply
+      condition: ${{ variables['is-deployment'] }}
