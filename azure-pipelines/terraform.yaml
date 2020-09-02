@@ -25,13 +25,13 @@ variables:
   - group: terraform-arm-client-config
 
   - name: is-dev
-    value: ${{ or(eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Build.SourceBranch'], 'refs/heads/feat/azure-pipelines')) }}
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/main') }}
 
   - name: is-production
     value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/production') }}
 
   - name: is-deployment
-    value: ${{ and(or(variables['is-dev'], variables['is-production']), ne(variables['Build.Reason'], 'Schedule')) }}
+    value: ${{ and(or(variables['is-dev'], variables['is-production']), ne(variables['Build.Reason'], 'Schedule'),  ne(variables['Build.Reason'], 'PullRequest')) }}
 
 stages:
 - stage: ci
@@ -40,16 +40,15 @@ stages:
   - job: terraform
     displayName: Terraform
     steps:
-    - task: DownloadSecureFile@1
-      displayName: load backend config secretFile
-      name: terraformConfig
-      inputs:
-        secureFile: azure.conf
-
     - script: terraform version
       displayName: terraform version
 
-    - script: terraform init -backend-config=$(terraformConfig.secureFilePath)
+    - script: |
+        terraform init \
+          -backend-config="storage_account_name=$(TF_STATE_BLOB_ACCOUNT_NAME)" \
+          -backend-config="container_name=$(TF_STATE_BLOB_CONTAINER_NAME)" \
+          -backend-config="key=$(TF_STATE_BLOB_FILE)" \
+          -backend-config="sas_token=$(TF_STATE_BLOB_SAS_TOKEN)"
       displayName: terraform init
 
     - script: terraform validate
@@ -63,7 +62,7 @@ stages:
 
     - script: terraform plan -detailed-exitcode
       displayName: detect configuration drift (prod only)
-      condition: ${{ variables['is-prod'] }}
+      condition: ${{ variables['is-production'] }}
 
     - script: terraform apply -auto-approve
       displayName: apply
