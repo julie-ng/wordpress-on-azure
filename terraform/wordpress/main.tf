@@ -108,7 +108,6 @@ resource "azurerm_app_service" "app" {
   }
 }
 
-
 # MySQL Database
 # --------------
 
@@ -136,7 +135,7 @@ resource "azurerm_mysql_server" "wordpress" {
   geo_redundant_backup_enabled      = false
   public_network_access_enabled     = true # for demo
   ssl_enforcement_enabled           = false # TODO
-  ssl_minimal_tls_version_enforced  = "TLS1_2"
+  ssl_minimal_tls_version_enforced  = "TLSEnforcementDisabled" # "TLS1_2"
 }
 
 resource "azurerm_mysql_database" "wordpress" {
