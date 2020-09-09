@@ -11,7 +11,7 @@ output "azure_container_registry" {
 }
 
 output "assets_storage_account" {
-  value = module.app.assets_storage_account
+  value = module.uploads.assets_storage_account
 }
 
 # Output - for SP setup

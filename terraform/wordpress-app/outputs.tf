@@ -36,10 +36,3 @@ output "mysql" {
 		db_name = azurerm_mysql_database.wordpress.name
 	}
 }
-
-output "assets_storage_account" {
-  value = {
-		name = azurerm_storage_account.assets.name
-		location = azurerm_storage_account.assets.location
-	}
-}

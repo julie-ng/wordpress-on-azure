@@ -36,13 +36,6 @@ variable "appservice_plan_size" {
   default = "B1"
 }
 
-# CDN
-
-variable "cdn_sku" {
-	type 	  = string
-	default = "Standard_Microsoft"
-}
-
 # Database (for testing only!)
 
 variable "mysql_admin_user" {
