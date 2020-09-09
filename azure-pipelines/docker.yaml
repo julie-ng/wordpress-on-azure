@@ -1,0 +1,88 @@
+# Build numbering format
+name: $(BuildID)
+
+# EXAMPLE PIPELINE ONLY
+# ---------------------
+# Right now will never run because we don't have these branches
+trigger:
+  - main
+  # - production
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  # Wordpress Specific
+  - name: image-name
+    value: custom/wordpress # acr task expected format
+
+  - name: image-tag
+    value: 'dev' # default
+
+  - name: azure-contaier-registry-host
+    value: wordpressagr5k.azurecr.io
+
+  - name: web-app-name
+    value: wordpress-agr5k-app
+
+  # Azure DevOps (ADO) service connection names
+  - name: ado-arm-connection
+    value: wordpress-demo-connection
+
+  - name: ado-acr-connection
+    value: wordpress-demo-acr-connection
+
+  # git
+
+  - name: is-dev
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}
+
+  - name: is-production
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/production') }}
+
+  - name: is-deployment
+    value: ${{ and(or(variables['is-dev'], variables['is-production']), ne(variables['Build.Reason'], 'Schedule'),  ne(variables['Build.Reason'], 'PullRequest')) }}
+
+stages:
+- stage: docker
+  displayName: 'Docker'
+  condition: ${{ variables['is-deployment'] }}
+  jobs:
+  - job: docker
+    displayName: Build and Push
+    steps:
+
+    - task: Docker@2
+      displayName: Login to ACR
+      inputs:
+        command: login
+        containerRegistry: $(ado-acr-connection)
+
+    - task: Docker@2
+      displayName: Build and Push
+      inputs:
+        command: buildAndPush
+        repository: $(image-name)
+        # N.B. tag must be multi-line string
+        tags: |
+          $(image-tag)
+
+    - task: Docker@2
+      displayName: Logout of ACR
+      inputs:
+        command: logout
+        containerRegistry: $(ado-acr-connection)
+
+- stage: appservice
+  displayName: 'App Service'
+  condition: and(succeeded('docker'), ${{ variables['is-deployment'] }})
+  jobs:
+  - job: deploy
+    displayName: Deploy Container
+    steps:
+    - task: AzureWebAppContainer@1
+      displayName: "App Service: deploy container"
+      inputs:
+        appName:  $(web-app-name)
+        azureSubscription: $(ado-arm-connection)
+        imageName: $(azure-contaier-registry-host)/$(image-name):$(image-tag)
