@@ -15,7 +15,7 @@ locals {
 # Wordpress App
 # -------------
 
-module "demo" {
-  source = "./terraform/wordpress"
+module "app" {
+  source = "./terraform/wordpress-app"
   name   = "wordpress-${local.suffix}"
 }
