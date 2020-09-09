@@ -14,8 +14,6 @@ services:
       WORDPRESS_DB_PASSWORD: badidea
       WORDPRESS_DB_NAME: wordpress
     volumes:
-      # - wordpress:/var/www/html
-      - ./themes/airi:/var/www/html/wp-content/themes/airi
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
   mysql:
