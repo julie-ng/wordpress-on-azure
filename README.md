@@ -4,7 +4,7 @@
 
 ## Azure Architecture
 
-TODO: add diagram
+![Azure Architecture](./azure-architecture.svg)
 
 ## Setup
 
