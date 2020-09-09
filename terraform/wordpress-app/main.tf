@@ -87,6 +87,13 @@ resource "azurerm_app_service" "app" {
     "DOCKER_ENABLE_CI"                    = "true"
   }
 
+
+  # TODO
+  # "MICROSOFT_AZURE_ACCOUNT_NAME"        =
+  # "MICROSOFT_AZURE_ACCOUNT_KEY"         =
+  # "MICROSOFT_AZURE_CONTAINER"           = "wordpress"
+  # Set Programmattically in storage module
+
   site_config {
     always_on        = true
     min_tls_version  = 1.2
