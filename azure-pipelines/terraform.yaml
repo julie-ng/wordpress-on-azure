@@ -1,10 +1,11 @@
 # Build numbering format
 name: $(BuildID)
 
+# EXAMPLE PIPELINE ONLY
+# ---------------------
+# Right now will never run because we don't have these branches
 trigger:
-  - feat/*
-  - main
-  - production
+  - infra/*
 
 pool:
   vmImage: 'ubuntu-latest'
