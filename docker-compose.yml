@@ -14,6 +14,7 @@ services:
       WORDPRESS_DB_PASSWORD: badidea
       WORDPRESS_DB_NAME: wordpress
     volumes:
+      - ./wp-plugins/windows-azure-storage:/var/www/html/wp-content/plugins/windows-azure-storage
       - ./uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
 
   mysql:
