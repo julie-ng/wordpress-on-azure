@@ -4,7 +4,13 @@
 
 ## Azure Architecture
 
+Cloud Native applications separate state from their application, which means your media files should _not_ be on what the app thinks is a file system.
+
 ![Azure Architecture](./azure-architecture.svg)
+
+Cloud Patterns put media images have a dedicated store - Object Storage, which is Blob Storage on Azure. Using the [Microsoft Azure Storage for WordPress](https://wordpress.org/plugins/windows-azure-storage/#installation) plugin, we can implement this architecture with minimal effort.
+
+No code require, just plugin installation and configuration 👌
 
 ## Setup
 
