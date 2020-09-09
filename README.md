@@ -1,79 +1,64 @@
 # wordpress-on-azure
 
-This uses official Wordpress image from
+[![Build Status](https://dev.azure.com/julie-msft/public-demos/_apis/build/status/wordpress-on-azure%20(docker%20image)?branchName=main)](https://dev.azure.com/julie-msft/public-demos/_build/latest?definitionId=18&branchName=main)
 
-[https://hub.docker.com/_/wordpress](https://hub.docker.com/_/wordpress)
+## Azure Architecture
+
+TODO: add diagram
+
+## Setup
+
+### 1) Create Azure Infrastructure with Terraform
+
+As of 9 Sept 2020, the Terraform script will generate _pretty much_ all of the Azure infrastructure you need. But the Wordpress configuration is not yet fully automated.
+
+Terraform TODO: 
+
+- [ ] Update container name (configured it differently in portal)
+- [ ] Document Terraform steps
+- [ ] Automatically configure storage account setup in App Service (currently done by hand)
+
+### 1) Create Custom Docker Image
+
+The initial app service loads _a copy_ of the official Docker image. For our demo, we create a custom image preloaded with the  need to publish the custom image with [Microsoft Azure Storage for WordPress](https://wordpress.org/plugins/windows-azure-storage/#installation) plugin.
+
+#### 2) Push into Azure Container Registry
+
+To get this image into the registry
+- build and push from local computer
+- run included Azure DevOps pipeline _after_ having 
+  - configured required service connections to the 
+    - Azure Resource Group, named it `ado-arm-connection`
+    - Azure Container Registry, named `ado-acr-connection`
+  - replaced YAML values with your terraform generated resource names, e.g.
 
 
-### Mounting Themes and Plugins
+#### Why Docker?
+
+To avoid having to constantly uploading all the PHP files with every Wordpress release, this demo uses official Wordpress image from [Official Docker Registry](https://hub.docker.com/_/wordpress)
+
+And upgrades are done in the [`Dockerfile`](./Dockerfile)
+
+```
+FROM wordpress:5.5
+```
+
+#### Mounting Themes and Plugins
+
+Per [official Wordpress documentation]([Official Docker Registry](https://hub.docker.com/_/wordpress)), we can customize the image like so:
 
 - Themes go in a subdirectory in `/var/www/html/wp-content/themes/`
 - Plugins go in a subdirectory in `/var/www/html/wp-content/plugins/`
 
+### 3) Configure Wordpress App (in Browser)
 
-# CI/CD - Create a Service Principal
+- Visit your Admin Panel
+- Under "Plugins", enable [Microsoft Azure Storage for WordPress](https://wordpress.org/plugins/windows-azure-storage/#installation) plugin, which is pre-installed in this demo's Docker image.
+- Under "Settings" > "Microsoft Azure" fill in the following settings:
+  - Credentials for Azure Storage Account
+    - Storage Account Name, e.g. `wordpressagr5kstatic`
+    - Storage Account Access Key
+    - Blob Storage Continer Name, e.g. `wordpress` 
+  - CDN for Azure Storage Account, e.g. `https://wordpress-agr5k.azureedge.net`
 
-### 1. Set subscription ID 
-
-We never save identifiers in git. 
-
-```
-export=AZ_SUBSCRIPTION_ID=00000000-0000-0000-0000-000000000000
-```
-
-### 2. Create Service princiapl and RBAC role assignment
-
-Note: must be done _AFTER_ terraform resources have been created b/c we are scoping service principal to a resource group. 
-
-There are 2 ways to do this
-
-#### Makefile (recommended)
-
-There is a `Makefile`
-
-- to get resource group name dynamically since we are appending random suffix to name
-- also has a `reset-scope` to target so we can re-use the service principal in case we run `terraform destroy`
-
-```
-make create-sp-for-rbac
-```
-
-#### via Azure CLI
-
-What the Makefile is doing, but filling in values for you
-
-```
-az ad sp create-for-rbac --name wordpress-demo-sp-rbac \
-		--role contributor \
-		--scopes /subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/wordpress-k8jul-rg \
-		--sdk-auth
-```
-
-### Example Output
-
-Note: Secrets and identifies have been _redacted_.
-
-```
-Changing "wordpress-demo-sp-rbac" to a valid URI of "http://wordpress-demo-sp-rbac", which is the required format used for service principal names
-Creating a role assignment under the scope of "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/wordpress-k8jul-rg"
-  Retrying role assignment creation: 1/36
-  Retrying role assignment creation: 2/36
-  Retrying role assignment creation: 3/36
-  Retrying role assignment creation: 4/36
-{
-  "clientId": "*****",
-  "clientSecret": "*****",
-  "subscriptionId": "00000000-0000-0000-0000-000000000000",
-  "tenantId": "00000000-0000-0000-0000-000000000000",
-  "activeDirectoryEndpointUrl": "https://login.microsoftonline.com",
-  "resourceManagerEndpointUrl": "https://management.azure.com/",
-  "activeDirectoryGraphResourceId": "https://graph.windows.net/",
-  "sqlManagementEndpointUrl": "https://management.core.windows.net:8443/",
-  "galleryEndpointUrl": "https://gallery.azure.com/",
-  "managementEndpointUrl": "https://management.core.windows.net/"
-}
-```
-
-### 3. Add Service Principal
-
-Now you can add those credentials as a _**manual**_ service connection in Azure DevOps, where SP id and secret correspond to `client` above.
+Note: all these resources are created by [Terraform](https://www.terraform.io/) and you can get the values in Azure Portal after infrastructure is created.
