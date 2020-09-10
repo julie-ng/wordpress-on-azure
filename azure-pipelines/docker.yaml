@@ -1,37 +1,22 @@
 # Build numbering format
 name: $(BuildID)
 
-# EXAMPLE PIPELINE ONLY
-# ---------------------
-# Right now will never run because we don't have these branches
 trigger:
-  - never/runs
+  - feat/docker-hub
   # - main
-  # - production
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  # Wordpress Specific
   - name: image-name
-    value: custom/wordpress # acr task expected format
+    value: onazureio/wordpress
 
   - name: image-tag
-    value: 'dev' # default
+    value: 'dev'
 
-  - name: azure-contaier-registry-host
-    value: wordpressagr5k.azurecr.io
-
-  - name: web-app-name
-    value: wordpress-agr5k-app
-
-  # Azure DevOps (ADO) service connection names
-  - name: ado-arm-connection
-    value: wordpress-demo-connection
-
-  - name: ado-acr-connection
-    value: wordpress-demo-acr-connection
+  - name: registry-connection
+    value: onazureio-docker-hub-connection
 
   # git
 
@@ -54,10 +39,10 @@ stages:
     steps:
 
     - task: Docker@2
-      displayName: Login to ACR
+      displayName: Login to Docker Hub
       inputs:
         command: login
-        containerRegistry: $(ado-acr-connection)
+        containerRegistry: $(registry-connection)
 
     - task: Docker@2
       displayName: Build and Push
@@ -69,21 +54,7 @@ stages:
           $(image-tag)
 
     - task: Docker@2
-      displayName: Logout of ACR
+      displayName: Logout
       inputs:
         command: logout
-        containerRegistry: $(ado-acr-connection)
-
-- stage: appservice
-  displayName: 'App Service'
-  condition: and(succeeded('docker'), ${{ variables['is-deployment'] }})
-  jobs:
-  - job: deploy
-    displayName: Deploy Container
-    steps:
-    - task: AzureWebAppContainer@1
-      displayName: "App Service: deploy container"
-      inputs:
-        appName:  $(web-app-name)
-        azureSubscription: $(ado-arm-connection)
-        imageName: $(azure-contaier-registry-host)/$(image-name):$(image-tag)
+        containerRegistry: $(registry-connection)
