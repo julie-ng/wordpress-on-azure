@@ -26,22 +26,22 @@ resource "null_resource" "copy_wordpress_image" {
 
   provisioner "local-exec" {
     environment = {
-			ACR_FQDN     = azurerm_container_registry.acr.login_server
-    	ACR_NAME     = azurerm_container_registry.acr.name
-    	ACR_USERNAME = azurerm_container_registry.acr.admin_username
-    	ACR_PASSWORD = azurerm_container_registry.acr.admin_password
-			WP_IMAGE     = var.default_wordpress_image
+      ACR_FQDN     = azurerm_container_registry.acr.login_server
+      ACR_NAME     = azurerm_container_registry.acr.name
+      ACR_USERNAME = azurerm_container_registry.acr.admin_username
+      ACR_PASSWORD = azurerm_container_registry.acr.admin_password
+      WP_IMAGE     = var.default_wordpress_image
     }
 
     command = <<EOT
-			az acr login \
-				--name $ACR_NAME \
+      az acr login \
+        --name $ACR_NAME \
         --username $ACR_USERNAME \
         --password $ACR_PASSWORD
-			docker pull $WP_IMAGE
-			docker tag $WP_IMAGE $ACR_FQDN/$WP_IMAGE
-			docker push $ACR_FQDN/$WP_IMAGE
-			docker logout
+      docker pull $WP_IMAGE
+      docker tag $WP_IMAGE $ACR_FQDN/$WP_IMAGE
+      docker push $ACR_FQDN/$WP_IMAGE
+      docker logout
     EOT
   }
 }
@@ -72,7 +72,7 @@ resource "azurerm_app_service" "app" {
   app_service_plan_id     = azurerm_app_service_plan.plan.id
   https_only              = true
   client_affinity_enabled = false
-	tags                		= var.tags
+  tags                		= var.tags
 
   # N.B. because this is a key vault pair, secrets here end up in logs (not good for CI/CD pipelines)
   app_settings = {
@@ -100,7 +100,7 @@ resource "azurerm_app_service" "app" {
   }
 
   logs {
-		# TODO
+    # TODO
     # application_logs {}
 
     http_logs {
@@ -124,7 +124,7 @@ resource "azurerm_mysql_server" "wordpress" {
   name                = "${var.name}-mysqlserver"
   location            = azurerm_resource_group.wordpress.location
   resource_group_name = azurerm_resource_group.wordpress.name
-	tags                = var.tags
+  tags                = var.tags
 
   administrator_login          = var.mysql_admin_user
   administrator_login_password = random_password.mysql.result

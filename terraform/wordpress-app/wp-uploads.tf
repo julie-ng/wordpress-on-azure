@@ -27,7 +27,7 @@ resource "azurerm_cdn_profile" "uploads" {
   location            = azurerm_resource_group.wordpress.location
   resource_group_name = azurerm_resource_group.wordpress.name
   sku                 = var.cdn_sku
-	tags                = var.tags
+  tags                = var.tags
 }
 
 resource "azurerm_cdn_endpoint" "uploads" {
@@ -35,7 +35,7 @@ resource "azurerm_cdn_endpoint" "uploads" {
   location                  = azurerm_resource_group.wordpress.location
   resource_group_name       = azurerm_resource_group.wordpress.name
   profile_name              = azurerm_cdn_profile.uploads.name
-	tags                      = var.tags
+  tags                      = var.tags
   origin_host_header        = azurerm_storage_account.uploads.primary_blob_host
   is_compression_enabled    = true
   content_types_to_compress = [

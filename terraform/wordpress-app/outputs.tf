@@ -1,9 +1,9 @@
 output "resource_group" {
-	value = {
-		name = azurerm_resource_group.wordpress.name
-		id = azurerm_resource_group.wordpress.id
-		location = azurerm_resource_group.wordpress.location
-	}
+  value = {
+    name = azurerm_resource_group.wordpress.name
+    id = azurerm_resource_group.wordpress.id
+    location = azurerm_resource_group.wordpress.location
+  }
 }
 
 output "app_service" {
@@ -26,22 +26,22 @@ output "app_service" {
 }
 
 output "azure_container_registry" {
-	value = azurerm_container_registry.acr.login_server
+  value = azurerm_container_registry.acr.login_server
 }
 
 output "mysql" {
-	value = {
-		host = azurerm_mysql_server.wordpress.fqdn
-		username = azurerm_mysql_server.wordpress.administrator_login
-		db_name = azurerm_mysql_database.wordpress.name
-	}
+  value = {
+    host = azurerm_mysql_server.wordpress.fqdn
+    username = azurerm_mysql_server.wordpress.administrator_login
+    db_name = azurerm_mysql_database.wordpress.name
+  }
 }
 
 output "uploads_storage_account" {
   value = {
-		name = azurerm_storage_account.uploads.name
-		location = azurerm_storage_account.uploads.location
-	}
+    name = azurerm_storage_account.uploads.name
+    location = azurerm_storage_account.uploads.location
+  }
 }
 
 output "uploads_cdn_enpoint" {

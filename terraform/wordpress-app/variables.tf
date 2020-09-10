@@ -10,17 +10,17 @@ variable "location" {
 }
 
 variable "docker_image" {
-	type 				= string
-	description = "Docker repository name with tag, e.g. wordpress:dev"
-	default     = "wordpress:dev"
+  type 				= string
+  description = "Docker repository name with tag, e.g. wordpress:dev"
+  default     = "wordpress:dev"
 }
 
 variable "tags" {
   type    = map(string)
   default = {
     public = "true"
-		demo   = "true"
-		oss    = "wordpress"
+    demo   = "true"
+    oss    = "wordpress"
   }
 }
 
@@ -39,13 +39,13 @@ variable "appservice_plan_size" {
 # Database (for testing only!)
 
 variable "mysql_admin_user" {
-	type    = string
-	default = "mysqladminun"
+  type    = string
+  default = "mysqladminun"
 }
 
 variable "default_wordpress_image" {
-	type    = string
-	default = "wordpress:5.5"
+  type    = string
+  default = "wordpress:5.5"
 }
 
 variable "acr_sku" {
@@ -76,14 +76,14 @@ variable "storage_account_replication" {
 }
 
 variable "cdn_sku" {
-	type 	  = string
+  type 	  = string
   description = "CDN SKU. Defaults to 'Standard_Microsoft'"
-	default = "Standard_Microsoft"
+  default = "Standard_Microsoft"
 }
 
 # Variables
 
 locals {
   name 					 = lower(var.name)
-	name_flattened = replace(var.name, "-", "")
+  name_flattened = replace(var.name, "-", "")
 }
