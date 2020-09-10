@@ -1,0 +1,100 @@
+# Build numbering format
+name: $(BuildID)
+
+trigger:
+  - feat/ci
+  # - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: wordpress-terraform-state-lib
+
+  - name: image-name
+    value: onazureio/wordpress
+
+  - name: image-tag
+    value: 'dev'
+
+  - name: registry-connection
+    value: onazureio-docker-hub-connection
+
+  # git
+
+  - name: is-dev
+    value: ${{ eq(variables['Build.SourceBranch'], 'refs/heads/feat/ci') }}
+
+  - name: is-deployment
+    value: ${{ and(variables['is-dev'], ne(variables['Build.Reason'], 'Schedule')) }}
+
+stages:
+- stage: DockerStage
+  displayName: 'Docker'
+  condition: ${{ variables['is-deployment'] }}
+  jobs:
+  - job: Docker
+    displayName: Build and Push
+    steps:
+
+    - task: Docker@2
+      displayName: Login to Docker Hub
+      inputs:
+        command: login
+        containerRegistry: $(registry-connection)
+
+    - task: Docker@2
+      displayName: Build and Push
+      inputs:
+        command: buildAndPush
+        repository: $(image-name)
+        # N.B. tag must be multi-line string
+        tags: |
+          $(image-tag)
+
+    - task: Docker@2
+      displayName: Logout
+      inputs:
+        command: logout
+        containerRegistry: $(registry-connection)
+
+- stage: TerraformStage
+  displayName: 'Terraform'
+  condition: and(succeeded('DockerStage'), ${{ variables['is-deployment'] }})
+  jobs:
+  - job: TerraformCreate
+    displayName: Create Azure Resources
+    steps:
+    - script: terraform version
+      displayName: terraform version
+
+    - script: |
+        terraform init \
+          -backend-config="storage_account_name=$(lib-var-storage-account-name)" \
+          -backend-config="container_name=$(lib-var-storage-container)" \
+          -backend-config="key=$(lib-var-state-filename)" \
+          -backend-config="sas_token=$(lib-var-storage-sas-tokenN)"
+      displayName: terraform init
+
+    - script: terraform validate
+      displayName: terraform validate
+
+    - script: terraform fmt -check
+      displayName: terraform fmt (lint)
+
+    - script: terraform plan
+      displayName: terraform plan
+
+    - script: terraform plan -detailed-exitcode
+      displayName: detect configuration drift
+
+    - script: terraform apply -auto-approve
+      displayName: terraform apply
+
+  - job: TerraformDestroy
+    displayName: Remove Azure Resources
+    dependsOn: TerraformCreate
+    condition: succeeded()
+    steps:
+    - script: terraform destroy -auto-approve
+      displayName: terraform destroy
