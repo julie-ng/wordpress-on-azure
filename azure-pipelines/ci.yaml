@@ -67,16 +67,12 @@ stages:
   jobs:
   - job: TerraformCreate
     displayName: Create Azure Resources
+    env:
+      ARM_CLIENT_ID: $(lib-var-sp-id)
+      ARM_CLIENT_SECRET: $(lib-var-sp-secret)
+      ARM_SUBSCRIPTION_ID: $(lib-var-arm-subscription-id)
+      ARM_TENANT_ID: $(lib-var-arm-tenant-id)
     steps:
-    - task: AzureCLI@2
-      displayName: Azure CLI
-      inputs:
-        azureSubscription: $(arm-connection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-          az --version
-
     - script: terraform version
       displayName: terraform version
 
