@@ -132,14 +132,12 @@ uploads_storage_account = {
 
 ## Step 2 - Configure Wordpress App (in Browser)
 
-In a browser
-
 1. Open your wordpress URL, e.g. `http://wordpress-n26it-app.azurewebsites.net"` **immediately** in your browser for security reasons.  
-  <img src="./images/wordpress-setup.png" alt="Setup Wordpress Screen" width="500">
-1. Select your language
-1. Create the administrator account, configure website title, etc.
-1. Confirm
-1. Finally Login with the credentials you just created in step 3  
+   <img src="./images/wordpress-setup.png" alt="Setup Wordpress Screen" width="500">. 
+2. Select your language
+3. Create the administrator account, configure website title, etc.
+4. Confirm
+5. Finally Login with the credentials you just created in step 3  
 
 ## Step 3 - Configure Azure Storage Plugin
 
