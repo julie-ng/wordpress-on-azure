@@ -64,11 +64,6 @@ stages:
 - stage: TerraformStage
   displayName: 'Terraform'
   condition: and(succeeded('DockerStage'), ${{ variables['is-deployment'] }})
-  env:
-    ARM_CLIENT_ID: $(lib-var-sp-id)
-    ARM_CLIENT_SECRET: $(lib-var-sp-secret)
-    ARM_SUBSCRIPTION_ID: $(lib-var-arm-subscription-id)
-    ARM_TENANT_ID: $(lib-var-arm-tenant-id)
   jobs:
   - job: TerraformCreate
     displayName: Create Azure Resources
