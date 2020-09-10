@@ -54,6 +54,33 @@ variable "acr_sku" {
   default     = "Standard"
 }
 
+# Uploads
+
+variable "storage_container_name" {
+  type        = string
+  description = "Name of Blob Storage container to use. Defaults to 'wordpress'"
+  default     = "wordpress"
+}
+
+variable "storage_account_tier" {
+  type        = string
+  description = "Azure Storage Account Pricing Tier. Defaults to 'Standard'"
+  default     = "Standard"
+}
+
+
+variable "storage_account_replication" {
+  type        = string
+  description = "Azure Storage Account Replication Setting. Defaults to 'LRS' for locally redundant storage"
+  default     = "LRS"
+}
+
+variable "cdn_sku" {
+	type 	  = string
+  description = "CDN SKU. Defaults to 'Standard_Microsoft'"
+	default = "Standard_Microsoft"
+}
+
 # Variables
 
 locals {

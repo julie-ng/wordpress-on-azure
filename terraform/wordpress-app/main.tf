@@ -76,29 +76,21 @@ resource "azurerm_app_service" "app" {
 
   # N.B. because this is a key vault pair, secrets here end up in logs (not good for CI/CD pipelines)
   app_settings = {
-    "DOCKER_REGISTRY_SERVER_URL"          = "https://${azurerm_container_registry.acr.login_server}"
-    "DOCKER_REGISTRY_SERVER_USERNAME"     = azurerm_container_registry.acr.admin_username
-    "DOCKER_REGISTRY_SERVER_PASSWORD"     = azurerm_container_registry.acr.admin_password
-    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = false
-    "WORDPRESS_DB_HOST"                   = azurerm_mysql_server.wordpress.fqdn
-    "WORDPRESS_DB_NAME"                   = azurerm_mysql_database.wordpress.name
-    "WORDPRESS_DB_USER"                   = var.mysql_admin_user
-    "WORDPRESS_DB_PASSWORD"               = random_password.mysql.result
-    "DOCKER_ENABLE_CI"                    = "true"
+    "DOCKER_REGISTRY_SERVER_URL"             = "https://${azurerm_container_registry.acr.login_server}"
+    "DOCKER_REGISTRY_SERVER_USERNAME"        = azurerm_container_registry.acr.admin_username
+    "DOCKER_REGISTRY_SERVER_PASSWORD"        = azurerm_container_registry.acr.admin_password
+    "WEBSITES_ENABLE_APP_SERVICE_STORAGE"    = "false"
+    "WORDPRESS_DB_HOST"                      = azurerm_mysql_server.wordpress.fqdn
+    "WORDPRESS_DB_NAME"                      = azurerm_mysql_database.wordpress.name
+    "WORDPRESS_DB_USER"                      = var.mysql_admin_user
+    "WORDPRESS_DB_PASSWORD"                  = random_password.mysql.result
+    "DOCKER_ENABLE_CI"                       = "true"
   }
-
-
-  # TODO
-  # "MICROSOFT_AZURE_ACCOUNT_NAME"        =
-  # "MICROSOFT_AZURE_ACCOUNT_KEY"         =
-  # "MICROSOFT_AZURE_CONTAINER"           = "wordpress"
-  # Set Programmattically in storage module
 
   site_config {
     always_on        = true
     min_tls_version  = 1.2
     ftps_state       = "Disabled"
-    # app_command_line = "bundle exec puma -C ./config/puma.rb"
     linux_fx_version = "DOCKER|${var.default_wordpress_image}"
   }
 
@@ -122,7 +114,6 @@ resource "random_password" "mysql" {
   length           = 64
   special          = false
 }
-
 
 resource "azurerm_mysql_server" "wordpress" {
   name                = "${var.name}-mysqlserver"

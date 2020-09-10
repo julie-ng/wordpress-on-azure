@@ -36,3 +36,14 @@ output "mysql" {
 		db_name = azurerm_mysql_database.wordpress.name
 	}
 }
+
+output "uploads_storage_account" {
+  value = {
+		name = azurerm_storage_account.uploads.name
+		location = azurerm_storage_account.uploads.location
+	}
+}
+
+output "uploads_cdn_enpoint" {
+  value = "https://${azurerm_cdn_endpoint.uploads.name}.azureedge.net"
+}

@@ -10,8 +10,12 @@ output "azure_container_registry" {
   value = module.app.azure_container_registry
 }
 
-output "assets_storage_account" {
-  value = module.uploads.assets_storage_account
+output "uploads_storage_account" {
+  value = module.app.uploads_storage_account
+}
+
+output "uploads_cdn_enpoint" {
+  value = "module.app.uploads_cdn_enpoint"
 }
 
 # Output - for SP setup
