@@ -72,11 +72,7 @@ stages:
       displayName: terraform version
 
     - script: |
-        terraform init \
-          -backend-config="storage_account_name=$(lib-var-storage-account-name)" \
-          -backend-config="container_name=$(lib-var-storage-container)" \
-          -backend-config="key=$(lib-var-state-filename)" \
-          -backend-config="sas_token=$(lib-var-storage-sas-tokenN)"
+        terraform init
       displayName: terraform init
 
     - script: terraform validate
@@ -87,9 +83,6 @@ stages:
 
     - script: terraform plan
       displayName: terraform plan
-
-    - script: terraform plan -detailed-exitcode
-      displayName: detect configuration drift
 
     - script: terraform apply -auto-approve
       displayName: terraform apply
