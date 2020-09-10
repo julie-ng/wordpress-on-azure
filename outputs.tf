@@ -6,16 +6,12 @@ output "app_service" {
   value = module.app.app_service
 }
 
-output "azure_container_registry" {
-  value = module.app.azure_container_registry
-}
-
 output "uploads_storage_account" {
   value = module.app.uploads_storage_account
 }
 
 output "uploads_cdn_enpoint" {
-  value = "module.app.uploads_cdn_enpoint"
+  value = module.app.uploads_cdn_enpoint
 }
 
 # Output - for SP setup

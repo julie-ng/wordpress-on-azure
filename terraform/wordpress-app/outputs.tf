@@ -23,10 +23,6 @@ output "app_service" {
   }
 }
 
-output "azure_container_registry" {
-  value = azurerm_container_registry.acr.login_server
-}
-
 output "mysql" {
   value = {
     host = azurerm_mysql_server.wordpress.fqdn

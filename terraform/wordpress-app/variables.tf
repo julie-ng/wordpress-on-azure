@@ -9,10 +9,10 @@ variable "location" {
   default			= "northeurope"
 }
 
-variable "docker_image" {
+variable "wordpress_image" {
   type 				= string
-  description = "Docker repository name with tag, e.g. wordpress:dev"
-  default     = "wordpress:dev"
+  description = "Docker repository name with tag, e.g. Defaults to onazureio/wordpress:5.5"
+  default     = "onazureio/wordpress:5.5"
 }
 
 variable "tags" {

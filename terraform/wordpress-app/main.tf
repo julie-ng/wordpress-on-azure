@@ -7,45 +7,6 @@ resource "azurerm_resource_group" "wordpress" {
   tags     = var.tags
 }
 
-# Azure Container Registry
-# ------------------------
-
-resource "azurerm_container_registry" "acr" {
-  name                     = local.name_flattened
-  resource_group_name      = azurerm_resource_group.wordpress.name
-  location                 = azurerm_resource_group.wordpress.location
-  sku                      = var.acr_sku
-  admin_enabled            = true
-  tags                     = var.tags
-}
-
-resource "null_resource" "copy_wordpress_image" {
-  triggers = {
-    acr = azurerm_container_registry.acr.id
-  }
-
-  provisioner "local-exec" {
-    environment = {
-      ACR_FQDN     = azurerm_container_registry.acr.login_server
-      ACR_NAME     = azurerm_container_registry.acr.name
-      ACR_USERNAME = azurerm_container_registry.acr.admin_username
-      ACR_PASSWORD = azurerm_container_registry.acr.admin_password
-      WP_IMAGE     = var.default_wordpress_image
-    }
-
-    command = <<EOT
-      az acr login \
-        --name $ACR_NAME \
-        --username $ACR_USERNAME \
-        --password $ACR_PASSWORD
-      docker pull $WP_IMAGE
-      docker tag $WP_IMAGE $ACR_FQDN/$WP_IMAGE
-      docker push $ACR_FQDN/$WP_IMAGE
-      docker logout
-    EOT
-  }
-}
-
 
 # App Service
 # -----------
@@ -76,9 +37,6 @@ resource "azurerm_app_service" "app" {
 
   # N.B. because this is a key vault pair, secrets here end up in logs (not good for CI/CD pipelines)
   app_settings = {
-    "DOCKER_REGISTRY_SERVER_URL"             = "https://${azurerm_container_registry.acr.login_server}"
-    "DOCKER_REGISTRY_SERVER_USERNAME"        = azurerm_container_registry.acr.admin_username
-    "DOCKER_REGISTRY_SERVER_PASSWORD"        = azurerm_container_registry.acr.admin_password
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE"    = "false"
     "WORDPRESS_DB_HOST"                      = azurerm_mysql_server.wordpress.fqdn
     "WORDPRESS_DB_NAME"                      = azurerm_mysql_database.wordpress.name
@@ -96,7 +54,7 @@ resource "azurerm_app_service" "app" {
     always_on        = true
     min_tls_version  = 1.2
     ftps_state       = "Disabled"
-    linux_fx_version = "DOCKER|${var.default_wordpress_image}"
+    linux_fx_version = "DOCKER|${var.wordpress_image}"
   }
 
   logs {
