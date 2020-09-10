@@ -36,7 +36,7 @@ There is no file system. Instead the application interfaces with an API over HTT
 
 and much more! 
 
-## Demo - How to Use
+# Demo - How to Use
 
 ### Why Docker?
 
@@ -63,40 +63,114 @@ Per [official documentation on Docker Hub](https://hub.docker.com/_/wordpress), 
 - Plugins go in a subdirectory in `/var/www/html/wp-content/plugins/`
 
 
-### Step 1 - Create Azure Infrastructure with Terraform
+## Step 1 - Create Azure Infrastructure with Terraform
 
-As of 9 Sept 2020, the Terraform script will generate _pretty much_ all of the Azure infrastructure you need. But the Wordpress configuration is not yet fully automated.
+For purpose of this demo, you will create the infrastructure locally from your machine.
 
-Terraform TODO: 
+#### Prerequisites
 
-- [ ] Update container name (configured it differently in portal)
-- [ ] Document Terraform steps
-- [ ] Automatically configure storage account setup in App Service (currently done by hand)
+- [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)   
+- [Terraform CLI](https://terraform.io)
 
-### 1) Create Custom Docker Image
+### Login to Azure
 
-The initial app service loads _a copy_ of the official Docker image. For our demo, we create a custom image preloaded with the  need to publish the custom image with [Microsoft Azure Storage for WordPress](https://wordpress.org/plugins/windows-azure-storage/#installation) plugin.
+You need an Azure Subscription with at least [Contributor](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) role in order to create the Azure resources.
 
-### 2) Push into Azure Container Registry
+If you do not have an active session, login and select your subscriptoin
 
-To get this image into the registry
-- build and push from local computer
-- run included Azure DevOps pipeline _after_ having 
-  - configured required service connections to the 
-    - Azure Resource Group, named it `ado-arm-connection`
-    - Azure Container Registry, named `ado-acr-connection`
-  - replaced YAML values with your terraform generated resource names, e.g.
+```
+az login
+az account set --subscription <SUBSCRIPTION_ID>
+```
+
+### Run Terraform
+
+Demo is already preconfigured. Note that the Infrastructure as Code will add a random string into your resource names, for example `n26it` in the example output below. This is necessary because certain Azure Resource Names, e.g. storage accounts and contianer registries need to be globally unique.
+
+Run:
+
+```
+terraform init
+terraform plan
+terraform apply
+```
+
+It may take several minutes to create all the infrastructure. Once it's done, you will see an output similar to this:
+
+```
+app_service = {
+  "hostname" = "wordpress-n26it-app.azurewebsites.net"
+  "name" = "wordpress-n26it-app"  
+  "site_config" = {
+    "always_on" = true
+    "app_command_line" = ""
+    "cors" = [
+      {
+        "allowed_origins" = []
+        "support_credentials" = false
+      },
+    ]
+    "ftps_state" = "Disabled"
+    "linux_fx_version" = "DOCKER|onazureio/wordpress:5.5"
+    "min_tls_version" = "1.2"
+    "scm_type" = "None"
+  }
+}
+resource_group = {
+  "id" = "/subscriptions/<SUBSCRIPTION_ID>/resourceGroups/wordpress-n26it-rg"
+  "location" = "northeurope"
+  "name" = "wordpress-n26it-rg"
+}
+resource_group_id = /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/wordpress-n26it-rg
+uploads_cdn_enpoint = https://wordpress-n26it.azureedge.net
+uploads_storage_account = {
+  "location" = "northeurope"
+  "name" = "wordpressn26ituploads"
+}
+```
 
 
-### 3) Configure Wordpress App (in Browser)
+## Step 2 - Configure Wordpress App (in Browser)
 
-- Visit your Admin Panel
-- Under "Plugins", enable [Microsoft Azure Storage for WordPress](https://wordpress.org/plugins/windows-azure-storage/#installation) plugin, which is pre-installed in this demo's Docker image.
-- Under "Settings" > "Microsoft Azure" fill in the following settings:
-  - Credentials for Azure Storage Account
-    - Storage Account Name, e.g. `wordpressagr5kstatic`
-    - Storage Account Access Key
-    - Blob Storage Continer Name, e.g. `wordpress` 
-  - CDN for Azure Storage Account, e.g. `https://wordpress-agr5k.azureedge.net`
+In a browser
 
-Note: all these resources are created by [Terraform](https://www.terraform.io/) and you can get the values in Azure Portal after infrastructure is created.
+1. Open your wordpress URL, e.g. `http://wordpress-n26it-app.azurewebsites.net"` **immediately** in your browser for security reasons.  
+  <img src="./images/wordpress-setup.png" alt="Setup Wordpress Screen" width="500">
+1. Select your language
+1. Create the administrator account, configure website title, etc.
+1. Confirm
+1. Finally Login with the credentials you just created in step 3  
+
+## Step 3 - Configure Azure Storage Plugin
+
+The [Microsoft Azure Storage for WordPress](https://wordpress.org/plugins/windows-azure-storage/#installation) plugin is pre-installed, but you must activate it.
+
+1. **Activate the Plugin**  
+  Go to "Plugins" > "Installed Plugins", check the box _and_ click the "Activate" link  
+   <img src="./images/wordpress-activate-plugin.png" alt="Activate Plugin" width="500">
+1. **Configure the Plugin**  
+   Go to "Settings" > "Microsoft Azure"  
+   <img src="./images/wordpress-configure-plugin.png" alt="Configure Plugin" width="500">
+   
+   
+Configure the following
+
+| Property | Example |
+|:--|:--|
+| Storage Account Name | `wordpressn26itstatic` |
+| Storage Account Access Key | redacted |
+| Blob Storage Continer Name | `wordpress`  |
+| CDN for Azure Storage Account | `https://wordpress-n26it.azureedge.net` |
+|  "Use for default upload" | click the checkbox |
+
+Scroll down and click the "Save Changes" button.
+
+## Step 4 - Upload and Test
+
+To test the setup, upload an image to your blog post and examine the URL. It should look something like this:
+
+```
+https://wordpress-n26it.azureedge.net/wordpress/2020/09/my-image-1024x730.png
+```
+
+And notice that wordpress even generated a thumbnail of size 1024x730 for me.
