@@ -85,6 +85,11 @@ resource "azurerm_app_service" "app" {
     "WORDPRESS_DB_USER"                      = var.mysql_admin_user
     "WORDPRESS_DB_PASSWORD"                  = random_password.mysql.result
     "DOCKER_ENABLE_CI"                       = "true"
+    "MICROSOFT_AZURE_ACCOUNT_NAME"           = azurerm_storage_account.uploads.name
+    "MICROSOFT_AZURE_ACCOUNT_KEY"            = azurerm_storage_account.uploads.primary_access_key
+    "MICROSOFT_AZURE_CONTAINER"              = var.storage_container_name
+    "MICROSOFT_AZURE_CNAME"                  = "https://${azurerm_cdn_endpoint.uploads.name}.azureedge.net"
+    "MICROSOFT_AZURE_USE_FOR_DEFAULT_UPLOAD" = "true"
   }
 
   site_config {
