@@ -17,6 +17,9 @@ variables:
   - name: image-tag
     value: 'dev'
 
+  - name: arm-connection
+    value: wordpress-demo-connection
+
   - name: registry-connection
     value: onazureio-docker-hub-connection
 
@@ -65,6 +68,15 @@ stages:
   - job: TerraformCreate
     displayName: Create Azure Resources
     steps:
+    - task: AzureCLI@2
+      displayName: Azure CLI
+      inputs:
+        azureSubscription: $(arm-connection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          az --version
+
     - script: terraform version
       displayName: terraform version
 
