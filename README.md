@@ -28,7 +28,7 @@ Terraform TODO:
 
 The initial app service loads _a copy_ of the official Docker image. For our demo, we create a custom image preloaded with the  need to publish the custom image with [Microsoft Azure Storage for WordPress](https://wordpress.org/plugins/windows-azure-storage/#installation) plugin.
 
-#### 2) Push into Azure Container Registry
+### 2) Push into Azure Container Registry
 
 To get this image into the registry
 - build and push from local computer
@@ -51,7 +51,7 @@ FROM wordpress:5.5
 
 #### Mounting Themes and Plugins
 
-Per [official Wordpress documentation]([Official Docker Registry](https://hub.docker.com/_/wordpress)), we can customize the image like so:
+Per [official documentation on Docker Hub](https://hub.docker.com/_/wordpress), we can customize the docker image like so:
 
 - Themes go in a subdirectory in `/var/www/html/wp-content/themes/`
 - Plugins go in a subdirectory in `/var/www/html/wp-content/plugins/`
