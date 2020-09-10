@@ -10,8 +10,6 @@ output "app_service" {
   value = {
     name     		 = azurerm_app_service.app.name
     hostname     = azurerm_app_service.app.default_site_hostname
-    outbound_ips = azurerm_app_service.app.outbound_ip_addresses
-    # selected site_config only
     site_config  = {
       always_on          = azurerm_app_service.app.site_config[0].always_on
       app_command_line   = azurerm_app_service.app.site_config[0].app_command_line
