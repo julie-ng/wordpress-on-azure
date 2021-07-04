@@ -35,7 +35,7 @@ resource "azurerm_app_service" "app" {
   client_affinity_enabled = false
   tags                		= var.tags
 
-  # N.B. because this is a key vault pair, secrets here end up in logs (not good for CI/CD pipelines)
+  # N.B. because this is a key value pair, secrets here end up in logs (not good for CI/CD pipelines)
   app_settings = {
     "WEBSITES_ENABLE_APP_SERVICE_STORAGE"    = "false"
     "WORDPRESS_DB_HOST"                      = azurerm_mysql_server.wordpress.fqdn
