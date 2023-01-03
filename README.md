@@ -2,7 +2,10 @@
 
 [![Build Status](https://dev.azure.com/julie-msft/public-demos/_apis/build/status/wordpress-on-azure%20(docker%20image)?branchName=main)](https://dev.azure.com/julie-msft/public-demos/_build/latest?definitionId=18&branchName=main)
 
-A Reference Architecture and Demo for Wordpress on Azure - at cloud native scale
+A Reference Architecture and Demo for Wordpress on Azure - at cloud native scale.
+
+> **Update January 2023 - First Party Offering**  
+> There is now an Azure Marketplace solution for Wordpress managed by the App Service team at Microsoft, which also has options for integrating blob storage and CDN delivery. See [this quickstart documentation](https://learn.microsoft.com/en-us/azure/app-service/quickstart-wordpress) for details.
 
 ## Architecture
 
@@ -172,3 +175,4 @@ https://wordpress-n26it.azureedge.net/wordpress/2020/09/my-image-1024x730.png
 ```
 
 And notice that wordpress even generated a thumbnail of size 1024x730 for me.
+
